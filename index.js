@@ -27,10 +27,24 @@ class Player {
 
         // c.fillStyle = 'red'
         // c.fillRect(this.position.x, this.position.y, 100, 100)
+        
+        // c.beginPath()
+        // c.moveTo(this.position.x + 30, this.position.y)
+        // c.lineTo(this.position.x - 10, this.position.y - 10)
+        // c.lineTo(this.position.x - 10, this.position.y + 10)
+        // c.closePath()
+
         c.beginPath()
-        c.moveTo(this.position.x + 30, this.position.y)
-        c.lineTo(this.position.x - 10, this.position.y - 10)
-        c.lineTo(this.position.x - 10, this.position.y + 10)
+        // Draw the pointy head
+        c.moveTo(this.position.x + 30, this.position.y);                  // Nose of the spaceship
+        // Draw the left side
+        c.lineTo(this.position.x - 10, this.position.y - 10);             // Left wing
+        // Draw the bottom point
+        c.lineTo(this.position.x - 7, this.position.y);                  // Bottom point
+        // Draw the right side
+        c.lineTo(this.position.x - 10, this.position.y + 10);             // Right wing
+        // Close the path back to the head
+        
         c.closePath()
         
         c.strokeStyle = 'white'
@@ -75,6 +89,7 @@ function animate(){
     if (keys.w.pressed) player.velocity.x = 1
 
     if (keys.d.pressed) player.rotation += 0.01
+      else if(keys.a.pressed) player.rotation -= 0.01
     
 
 }
