@@ -106,6 +106,7 @@ const keys = {
 const SPEED = 3
 const ROTATIONAL_SPEED = 0.05
 const FRICTION = 0.97
+const PROJECTILE_SPEED = 3
 
 const projectiles = []
 
@@ -120,6 +121,17 @@ function animate() {
   for (let j = projectiles.length - 1; j >= 0; j--) {
     const projectile = projectiles[j]
     projectile.update()
+
+
+    // garbage collection for projectiles
+    if (
+      projectile.position.x + projectile.radius < 0 ||
+      projectile.position.x - projectile.radius > canvas.width ||
+      projectile.position.y - projectile.radius > canvas.height ||
+      projectile.position.y + projectile.radius < 0
+    ) {
+      projectiles.splice(j, 1)
+    }
   }
 
 
@@ -157,16 +169,16 @@ window.addEventListener('keydown', (event) => {
       projectiles.push(
         new Projectile({
           position: {
-            x: player.position.x,
-            y: player.position.y,
+            x: player.position.x + Math.cos(player.rotation) * 30,
+            y: player.position.y + Math.sin(player.rotation) * 30,
           },
           velocity: {
-            x: 1,
-            y: 0,
+            x: Math.cos(player.rotation) * PROJECTILE_SPEED,
+            y: Math.sin(player.rotation) * PROJECTILE_SPEED,
           },
         })
       )
-
+      console.log(projectiles)
       break
   }
 })
