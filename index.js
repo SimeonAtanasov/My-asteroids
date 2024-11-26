@@ -4,6 +4,8 @@ const c = canvas.getContext('2d')
 canvas.width = window.innerWidth
 canvas.height = window.innerHeight
 
+let score = 0;
+
 class Player {
   constructor({ position, velocity }) {
     this.position = position // {x, y}
@@ -142,12 +144,16 @@ const keys = {
   d: {
     pressed: false,
   },
+  s: {
+    pressed: false, // Add this for the "S" key
+  }
 }
 
-const SPEED = 3
+const SPEED = 6
 const ROTATIONAL_SPEED = 0.05
 const FRICTION = 0.97
-const PROJECTILE_SPEED = 3
+const FRICTIONTWO = 0.93
+const PROJECTILE_SPEED = 5
 
 const projectiles = []
 const asteroids = []
@@ -199,7 +205,7 @@ const intervalId = window.setInterval(() => {
     })
   )
   // console.log(asteroids)
-}, 3000)// 3000 milliseconds
+}, 1000)// 3000 milliseconds
 
 function circleCollision(circle1, circle2) {
   const xDifference = circle2.position.x - circle1.position.x
@@ -269,6 +275,11 @@ function animate() {
 
   player.update()
 
+  // Display the score
+  c.font = '30px Arial'
+  c.fillStyle = 'white'
+  c.fillText('Score: ' + score, 20, 40)
+
   for (let j = projectiles.length - 1; j >= 0; j--) {
     const projectile = projectiles[j]
     projectile.update()
@@ -294,6 +305,12 @@ function animate() {
       console.log('GAME OVER')
       window.cancelAnimationFrame(animationId)
       clearInterval(intervalId)
+
+        // Show the restart button
+      const restartButton = document.getElementById('restartButton');
+      restartButton.style.display = 'block';
+
+      restartButton.textContent = 'Restart Game - Score: ' + score;
     }
 
     // garbage collection for asteroids
@@ -312,6 +329,7 @@ function animate() {
       if (circleCollision(asteroid, projectile)) {
         asteroids.splice(i, 1)
         projectiles.splice(j, 1)
+        score += 10 // Increment score when an asteroid is destroyedaw
       }
     }
   }
@@ -363,13 +381,19 @@ function isPointOnLineSegment(x, y, start, end) {
 }
 
 
-  if (keys.w.pressed) {
-    player.velocity.x = Math.cos(player.rotation) * SPEED
-    player.velocity.y = Math.sin(player.rotation) * SPEED
-  } else if (!keys.w.pressed) {
-    player.velocity.x *= FRICTION
-    player.velocity.y *= FRICTION
-  }
+if (keys.w.pressed) {
+  // Move forward if "W" is pressed
+  player.velocity.x = Math.cos(player.rotation) * SPEED
+  player.velocity.y = Math.sin(player.rotation) * SPEED
+} else if (keys.s.pressed) {
+  // Apply friction if "S" is pressed
+  player.velocity.x *= FRICTIONTWO 
+  player.velocity.y *= FRICTIONTWO
+} else {
+  // Apply friction if neither "W" nor "S" is pressed
+  player.velocity.x *= FRICTION
+  player.velocity.y *= FRICTION
+}
 
   if (keys.d.pressed) player.rotation += ROTATIONAL_SPEED
   else if (keys.a.pressed) player.rotation -= ROTATIONAL_SPEED
@@ -393,7 +417,11 @@ window.addEventListener('keydown', (event) => {
     case 'KeyD':
       keys.d.pressed = true
       break
+    case 'KeyS': // Add this case
+      keys.s.pressed = true
+      break
     case 'Space':
+      event.preventDefault(); // Prevent the page from scrolling
       projectiles.push(
         new Projectile({
           position: {
@@ -422,5 +450,15 @@ window.addEventListener('keyup', (event) => {
     case 'KeyD':
       keys.d.pressed = false
       break
+    case 'KeyS': // Add this case
+      keys.s.pressed = false
+      break
   }
 })
+
+
+// Event listener for the restart button
+document.getElementById('restartButton').addEventListener('click', () => {
+  // Reload the page (simple approach)
+  location.reload();
+});

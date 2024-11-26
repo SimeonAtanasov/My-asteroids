@@ -24,5 +24,5 @@ circleCollision: Handles projectile-asteroid collision.
 Game Loop: The animate function redraws the canvas and updates game elements every frame.
 Asteroid Spawning:
 
-New asteroids appear every 3 seconds (setInterval).
+New asteroids appear every 1 seconds (setInterval).
 They spawn off-screen and move toward the screen with random velocities.
